@@ -13,7 +13,7 @@ library(ggplot2)
 library(ggrepel)
 library(viridis)
 require(cowplot)
-
+library(scales)
 ```
 
 ## Serology Testing Exploration
@@ -37,8 +37,8 @@ require(cowplot)
 
 # Dummy frame for reported prevalence values
 reported_prev <- data.frame(
-  area = c("NY State", "NYC Shoppers", "LA Study", "Santa Clara Study"),
-  prev = c(0.139, 0.212, 0.208, 0.242)
+  area = c("NY State Shoppers", "NYC Shoppers", "LA Study", "Santa Clara Study"),
+  prev = c(0.139, 0.212, 0.041, 0.025)
 )
 
 # Z score for 95% CI
@@ -46,7 +46,7 @@ z = 1.96
 
 # PREVALENCE RANGE 
 # based on reported prevalences
-min_prev = min(reported_prev$prev - 0.1)
+min_prev = 0.0001 # infinity for zero
 max_prev = max(reported_prev$prev + 0.1)
 
 # TOLERANCE LEVEL (ALLOWABLE ERROR)
@@ -82,12 +82,15 @@ plot_q1 <- ggplot(data = result_df,
              linetype = "dashed", 
              color = "red") +
   geom_text_repel(data = reported_prev,
-                    aes(y = max(result_df$min_n_perfect),
+                    aes(y = sample(10000:100000, nrow(reported_prev)),
                         x = prev,
                         label = area),
-                    box.padding = 0.2,
+                    box.padding = 0.3,
+                  point.padding = 0.3,
                     arrow = arrow(ends = "last", length = unit(0.1, "cm"))
                    ) +
+  scale_y_log10(labels = comma) +
+  scale_x_continuous(labels = percent) +
   ggtitle("Sample size needed to estimate population prevalence\nwith 95% confidence of being within tolerance using a perfect test")
 
 plot_q1
@@ -128,12 +131,15 @@ plot_q2 <- ggplot(data = imp_result_df,
              linetype = "dashed", 
              color = "red") +
   geom_text_repel(data = reported_prev,
-                    aes(y = max(imp_result_df$min_n_imperfect),
+                    aes(y = sample(1000000:10000000, nrow(reported_prev)),
                         x = prev,
                         label = area),
-                    box.padding = 0.2,
+                    box.padding = 0.3,
+                  point.padding = 0.3,
                     arrow = arrow(ends = "last", length = unit(0.1, "cm"))
                    ) +
+  scale_y_log10(labels = comma) +
+  scale_x_continuous(labels = percent) +
   ggtitle(paste0("Sample size needed to estimate population prevalence\nwith 95% confidence of being within tolerance\nusing an imperfect test: Sensitivity = ", sens, " Specificity = ", spec))
 
 plot_q2

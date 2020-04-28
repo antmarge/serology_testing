@@ -1,12 +1,19 @@
 ---
 title: "Serology Testing Sample Size Estimation"
-author: "Margaret Antonio"
+author: "CS472"
 date: "4/27/2020"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggrepel)
+library(viridis)
+require(cowplot)
+
 ```
 
 ## Serology Testing Exploration
@@ -24,7 +31,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Q1: How large does sample size need to be to detect prevalence levels using a perfect test?
 
-```{r setup}
+```{r q1}
 
 # Set up data
 
@@ -89,7 +96,7 @@ plot_perfect
 
 ### Q2: How large does sample size need to be to detect prevalence levels using an imperfect test?
 
-```{r}
+```{r q2}
 
 # Imperfect test - with sensitivity and specificity
 # Rogan and Gladen 1978
@@ -139,7 +146,7 @@ plot_imperfect
 
 ### Q3: For a set prevalence, how does sensitivity and specificity affect needed sample size?
 
-```{r}
+```{r q3}
 
 # Use same formula for imperfect test as in Q2
 # Set prevalence to 0.1 

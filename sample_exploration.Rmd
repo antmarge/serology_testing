@@ -197,15 +197,6 @@ plot_q3
 ```
 
 
-```{r save_plots}
-
-ggsave(plot_q1, filename = "./plots/q1.pdf", device = "pdf")
-ggsave(plot_q2, filename = "./plots/q2.pdf", device = "pdf")
-ggsave(plot_q3, filename = "./plots/q3.pdf", device = "pdf")
-
-
-
-```
 
 
 ```{r}

@@ -148,7 +148,7 @@ reported_ss <- data.frame(
   spec = c(0.8,0.9,1)
 )
 
-set_prev = 0.1
+set_prev = 0.01
 # Now vary sensitivity and specificity
 
 q3_result_df <- data.frame(
@@ -182,24 +182,6 @@ plot_q3
 ```
 
 ![](sample_exploration_files/figure-markdown_github/q3-1.png)
-
-``` r
-ggsave(plot_q1, filename = "./plots/q1.pdf", device = "pdf")
-```
-
-    ## Saving 7 x 5 in image
-
-``` r
-ggsave(plot_q2, filename = "./plots/q2.pdf", device = "pdf")
-```
-
-    ## Saving 7 x 5 in image
-
-``` r
-ggsave(plot_q3, filename = "./plots/q3.pdf", device = "pdf")
-```
-
-    ## Saving 7 x 5 in image
 
 ``` r
 p_test = 0.05

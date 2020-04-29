@@ -2,7 +2,7 @@
 title: "Serology Testing Sample Size Estimation"
 author: "CS472"
 date: "4/27/2020"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -63,16 +63,16 @@ max_prev = max(reported_prev$prev + 0.1)
 # min_n_perfect: 95% chance of estimating true prevalence at min sample size
 
 result_df <- data.frame(prevalence = seq(min_prev, max_prev, by = .01)) %>%
-  mutate(tolerance = ifelse(prevalence < 0.1 | prevalence > 0.0,
+  mutate(tolerance = ifelse(prevalence < 0.1 | prevalence > 0.9,
                             prevalence/2,
-                            0.05),
+                            prevalence/2),
          min_n_perfect = ((z/tolerance)^2) * prevalence * (1 - prevalence))
 
 # Plot estimates of prevalence vs min n
 plot_q1 <- ggplot(data = result_df, 
        aes(x = prevalence, y = min_n_perfect)) +
-    geom_errorbarh(aes(xmin = prevalence - tolerance/2, 
-                     xmax = prevalence + tolerance/2),
+    geom_errorbarh(aes(xmin = prevalence - tolerance, 
+                     xmax = prevalence + tolerance),
                  color = "darkgray") +
   geom_point() +
   geom_line() +
@@ -165,7 +165,7 @@ reported_ss <- data.frame(
   spec = c(0.8,0.9,1)
 )
 
-set_prev = 0.1
+set_prev = 0.01
 # Now vary sensitivity and specificity
 
 q3_result_df <- data.frame(
@@ -202,6 +202,26 @@ plot_q3
 ggsave(plot_q1, filename = "./plots/q1.pdf", device = "pdf")
 ggsave(plot_q2, filename = "./plots/q2.pdf", device = "pdf")
 ggsave(plot_q3, filename = "./plots/q3.pdf", device = "pdf")
+
+
+
+```
+
+
+```{r}
+
+p_test = 0.05
+x = seq(0.1,1, by = 0.1)
+b = seq(1,10, by = 1)
+
+data.frame(p_covid.test = x,
+           p_test.covid = b) %>%
+  expand(p_covid.test, p_test.covid) %>%
+  mutate(p_covid = (p_test/p_test.covid) * p_covid.test) %>%
+ggplot(aes(x = p_covid.test, y =  p_covid, color = p_test.covid)) +
+  geom_line(aes(group = p_test.covid)) +
+  geom_abline(intercept = 0, slope = 1, color = "red") +
+  scale_color_viridis(discrete = F)
 
 
 

@@ -157,7 +157,7 @@ q3_result_df <- data.frame(
   complete(sens, spec) %>%
  mutate(
    prevalence = set_prev,
-   tolerance = ifelse(prevalence < 0.1 | prevalence > 0.0,
+   tolerance = ifelse(prevalence < 0.1 | prevalence > 0.9,
                             prevalence/2,
                             0.05),
    min_n = (z/tolerance)^2 * 

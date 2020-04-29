@@ -31,6 +31,11 @@ library(scales)
 
 ### Q1: How large does sample size need to be to detect prevalence levels using a perfect test?
 
+Use normal approximation to binomial distribution to determine minimum $n$ to detect prevalence $p$ with tolerance $d$ at desired confidence interval $z$ 
+
+$n = (\frac{z}{d})^2 * p (1 - p))$
+
+
 ```{r q1}
 
 # Set up data
@@ -50,7 +55,7 @@ min_prev = 0.0001 # infinity for zero
 max_prev = max(reported_prev$prev + 0.1)
 
 # TOLERANCE LEVEL (ALLOWABLE ERROR)
-# Conventionally, an ‘absolute’ allowable error margin d of ±5 % is chosen, 
+# Conventionally, an ‘absolute’ allowable error margin d of 5 % is chosen, 
 # but, as is common in clinical practice, 
 # if expected prevalence P is <10 %, 
 # the 95 % confidence boundaries may cross 0, which is impractical.
@@ -98,6 +103,13 @@ plot_q1
 ```
 
 ### Q2: How large does sample size need to be to detect prevalence levels using an imperfect test?
+
+Same as Eq. 1, but incorporate sensitivity and specificity. See Humphry 2014 Eq. 2
+
+x = sensitivity
+y = specificity
+$n = (\frac{z}{d})^2 \frac{xp + (1-x) * (1-p) *(1- xp - (1-y)(1-p))}{(x - y - 1)^2}$
+
 
 ```{r q2}
 
@@ -188,7 +200,7 @@ plot_q3 <- ggplot(data = q3_result_df,
   geom_tile(aes(fill = min_n, label = min_n)) +
   geom_text(aes(label = round(min_n, digits = 0))) +
   ggtitle(paste0("Sample size needed to detect prevalence of ", 
-                 set_prev, " with varying test S&S")) +
+                 set_prev, " [0.05,0.15] with varying test S&S")) +
   scale_fill_viridis(discrete = F)
 
 plot_q3
@@ -201,18 +213,22 @@ plot_q3
 
 ```{r}
 
-p_test = 0.05
-x = seq(0.1,1, by = 0.1)
-b = seq(1,10, by = 1)
+p_test = 0.001
+p_covid.test = seq(0,1, by = 0.1)
+p_test.covid = seq(0, p_test*2, length.out = length(p_covid.test))
 
-data.frame(p_covid.test = x,
-           p_test.covid = b) %>%
+df <- data.frame(p_covid.test = p_covid.test,
+           p_test.covid = p_test.covid) %>%
   expand(p_covid.test, p_test.covid) %>%
-  mutate(p_covid = (p_test/p_test.covid) * p_covid.test) %>%
-ggplot(aes(x = p_covid.test, y =  p_covid, color = p_test.covid)) +
+  mutate(p_covid = (p_test/p_test.covid) * p_covid.test) 
+
+ggplot(data = df,
+       aes(x =p_covid.test, y = p_covid,
+           color = p_test / p_test.covid )) +
   geom_line(aes(group = p_test.covid)) +
   geom_abline(intercept = 0, slope = 1, color = "red") +
   scale_color_viridis(discrete = F)
+
 
 
 
